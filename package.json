@@ -4,6 +4,7 @@
   "description": "A fullstack monorepo template with Bun, TypeScript, AWS Lambda, and React",
   "type": "module",
   "files": [
+    "index.js",
     "templates/**/*",
     "scripts/**/*",
     "*.json",
@@ -41,8 +42,8 @@
   "license": "MIT",
   "author": "Your Name",
   "homepage": "https://github.com/your-username/bun-fullstack-monorepo#readme",
-  "bun-create": {
-    "postinstall": "bun run init"
+  "bin": {
+    "create-bun-fullstack-monorepo": "./index.js"
   },
   "workspaces": [
     "functions/*",
@@ -54,6 +55,7 @@
     "node": ">=24.0.0"
   },
   "scripts": {
+    "postinstall": "bun run init",
     "init": "bun scripts/init.ts",
     "create:function": "bun scripts/create.ts function",
     "create:package": "bun scripts/create.ts package",
