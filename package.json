@@ -1,7 +1,7 @@
 {
   "name": "bun-fullstack-monorepo",
   "version": "0.1.0",
-  "description": "{{PROJECT_DESCRIPTION}}",
+  "description": "A fullstack monorepo template with Bun, TypeScript, AWS Lambda, and React",
   "type": "module",
   "files": [
     "templates/**/*",
@@ -55,7 +55,6 @@
   },
   "scripts": {
     "init": "bun scripts/init.ts",
-    "prepublishOnly": "node scripts/prepublish.js",
     "create:function": "bun scripts/create.ts function",
     "create:package": "bun scripts/create.ts package",
     "create:app": "bun scripts/create.ts app",

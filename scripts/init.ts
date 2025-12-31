@@ -137,12 +137,28 @@ try {
     'create-bun-fullstack-monorepo',
   ];
   
+  // Template description that should be replaced
+  const templateDescription = 'A fullstack monorepo template with Bun, TypeScript, AWS Lambda, and React';
+  
+  let updated = false;
+  
   // If package.json has the template package name, replace it with project name
   if (pkgJson.name && templatePackageNames.includes(pkgJson.name)) {
     const oldName = pkgJson.name;
     pkgJson.name = projectNameKebab;
-    writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2) + '\n', 'utf8');
+    updated = true;
     console.log(`📝 Updated package.json name: ${oldName} -> ${projectNameKebab}`);
+  }
+  
+  // If package.json has the template description, replace it with project description
+  if (pkgJson.description === templateDescription) {
+    pkgJson.description = `${projectNamePascal} - Fullstack Monorepo with Bun`;
+    updated = true;
+    console.log(`📝 Updated package.json description`);
+  }
+  
+  if (updated) {
+    writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2) + '\n', 'utf8');
   }
 } catch (err) {
   // Ignore errors, package.json might not exist or be invalid
