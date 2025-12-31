@@ -183,41 +183,20 @@ async function main() {
       process.exit(1);
     }
     
-    console.log(`📁 Target directory: ${targetDir}`);
-    
-    try {
-      await cp(templateDir, targetDir, {
-        recursive: true,
-        filter: (src) => {
-          // Filter out node_modules and .git directory (but not .gitignore, .editorconfig, etc.)
-          const basename = src.split(/[/\\]/).pop() || '';
-          return !src.includes('node_modules') && 
-                 basename !== '.git' &&
-                 !src.includes('bun.lockb');
-        },
-      });
-      
-      // Verify files were copied
-      const copiedFiles = await readdir(targetDir);
-      console.log(`✅ Copied ${copiedFiles.length} items: ${copiedFiles.join(', ')}`);
-      
-      if (copiedFiles.length === 0) {
-        console.error('❌ No files were copied! Trying manual copy...');
-        // Try manual copy as fallback
-        const templateFiles = await readdir(templateDir);
-        for (const file of templateFiles) {
-          const srcPath = join(templateDir, file);
-          const destPath = join(targetDir, file);
-          console.log(`  Copying: ${file}`);
-          await cp(srcPath, destPath, { recursive: true });
-        }
-        const afterManualCopy = await readdir(targetDir);
-        console.log(`✅ After manual copy: ${afterManualCopy.length} items`);
+    // Copy template files individually (more reliable across platforms)
+    const templateFiles = await readdir(templateDir);
+    for (const file of templateFiles) {
+      // Skip files that shouldn't be copied
+      if (file === 'node_modules' || file === '.git' || file === 'bun.lockb') {
+        continue;
       }
-    } catch (cpError) {
-      console.error('❌ cp error:', cpError instanceof Error ? cpError.message : String(cpError));
-      throw cpError;
+      const srcPath = join(templateDir, file);
+      const destPath = join(targetDir, file);
+      await cp(srcPath, destPath, { recursive: true });
     }
+    
+    const copiedFiles = await readdir(targetDir);
+    console.log(`✅ Copied ${copiedFiles.length} files`);
 
     // Replace placeholders in all files
     console.log('🔄 Replacing placeholders...');
