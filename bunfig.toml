@@ -1,0 +1,20 @@
+# Bun configuration for {{PROJECT_NAME}} monorepo
+
+# Install configuration
+[install]
+# Use exact versions for reproducible builds
+exact = false
+# Don't install optional dependencies
+optional = false
+# Install peer dependencies automatically
+peer = true
+
+# Workspace configuration
+[workspace]
+# Workspaces are defined in package.json
+# bun will automatically detect workspaces from package.json
+
+# Registry configuration (if needed)
+# [install.scopes]
+# "{{ORG_NAME}}" = "https://registry.npmjs.org"
+

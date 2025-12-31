@@ -1,0 +1,48 @@
+# SAM CLI 配置文件
+# 用于本地部署和 CI/CD 部署
+
+version = 0.1
+
+[default]
+[default.global.parameters]
+stack_name = "{{PROJECT_NAME}}-dev"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = false
+resolve_s3 = true  # SAM 会自动处理 S3 bucket（自动创建或使用现有）
+s3_prefix = "{{PROJECT_NAME}}"
+region = "ap-southeast-2"  # 可根据你的 AWS 配置修改
+image_repositories = []
+parameter_overrides = "Environment=dev"
+# s3_bucket = "your-sam-deployment-bucket"  # 可选：如果不想让 SAM 自动创建，取消注释并填入 bucket 名称
+
+[default.package.parameters]
+resolve_s3 = true
+
+# 生产环境配置
+[prod]
+[prod.global.parameters]
+stack_name = "{{PROJECT_NAME}}-prod"
+
+[prod.build.parameters]
+cached = true
+parallel = true
+
+[prod.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true  # 生产环境需要确认
+resolve_s3 = true  # SAM 会自动处理 S3 bucket（自动创建或使用现有）
+s3_prefix = "{{PROJECT_NAME}}"
+region = "ap-southeast-2"  # 可根据你的 AWS 配置修改
+image_repositories = []
+parameter_overrides = "Environment=prod"
+# s3_bucket = "your-sam-deployment-bucket"  # 可选：如果不想让 SAM 自动创建，取消注释并填入 bucket 名称
+
+[prod.package.parameters]
+resolve_s3 = true
+

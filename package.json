@@ -1,0 +1,54 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "version": "1.0.0",
+  "description": "{{PROJECT_DESCRIPTION}}",
+  "private": true,
+  "workspaces": [
+    "functions/*",
+    "packages/*",
+    "apps/*"
+  ],
+  "packageManager": "bun@1.3.5",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "init": "bun scripts/init.ts",
+    "create:function": "bun scripts/create.ts function",
+    "create:package": "bun scripts/create.ts package",
+    "create:app": "bun scripts/create.ts app",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "lint:ts": "biome check . && biome format .",
+    "lint:ts:fix": "biome check --write . && biome format --write .",
+    "lint:md": "markdownlint '**/*.md' --ignore '**/node_modules/**' --ignore '**/dist/**' --ignore '**/build/**' --ignore '**/.aws-sam/**' --ignore '**/.turbo/**' --ignore '**/templates/**'",
+    "lint:md:fix": "markdownlint '**/*.md' --fix --ignore '**/node_modules/**' --ignore '**/dist/**' --ignore '**/build/**' --ignore '**/.aws-sam/**' --ignore '**/.turbo/**' --ignore '**/templates/**'",
+    "lint": "bun run lint:ts && bun run lint:md",
+    "lint:fix": "bun run lint:ts:fix && bun run lint:md:fix",
+    "build": "turbo run build",
+    "build:functions": "turbo run build --filter='./functions/*'",
+    "sam:build": "bun run build:functions && sam build",
+    "sam:local": "sam local start-api",
+    "sam:invoke": "sam local invoke",
+    "clean": "turbo run clean && rimraf dist build .aws-sam .turbo"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.10",
+    "@types/aws-lambda": "^8.10.130",
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "@vitest/coverage-v8": "^4.0.16",
+    "esbuild": "^0.27.2",
+    "markdownlint-cli": "^0.47.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rimraf": "^6.1.2",
+    "turbo": "^2.7.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8",
+    "vitest": "^1.2.0"
+  }
+}
+

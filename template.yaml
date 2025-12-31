@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-31'
+Transform: AWS::Serverless-2016-10-31
+Description: {{PROJECT_NAME_PASCAL}} Lambda Functions
+
+Globals:
+  Function:
+    Runtime: nodejs24.x
+    Timeout: 30
+    MemorySize: 512
+    Environment:
+      Variables:
+        NODE_ENV: !Ref Environment
+
+Parameters:
+  Environment:
+    Type: String
+    Default: prod
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+
+Resources:
+  # Functions will be added here by create-function script
+  # Placeholder resource (remove after adding first function)
+  Placeholder:
+    Type: AWS::CloudFormation::WaitConditionHandle
+
+# Outputs:
+#   ApiGatewayApi:
+#     Description: API Gateway endpoint URL
+#     Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
+

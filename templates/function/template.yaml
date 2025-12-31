@@ -1,0 +1,17 @@
+Resources:
+  {{NamePascal}}Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/{{name}}/dist
+      Handler: index.handler
+      Runtime: nodejs24.x
+      Environment:
+        Variables:
+          NODE_ENV: ${Env:NODE_ENV,prod}
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /{{name}}
+            Method: GET
+
