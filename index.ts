@@ -9,13 +9,13 @@
  */
 
 import { cp, mkdir, readdir, readFile, writeFile, stat } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Get target directory from command line arguments
-const targetDir = process.argv[2] || process.cwd();
+// Get target directory from command line arguments (resolve to absolute path)
+const targetDir = resolve(process.argv[2] || process.cwd());
 const templateDir = join(__dirname, 'template');
 
 // Get project name from target directory
