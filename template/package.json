@@ -27,7 +27,7 @@
     "build": "turbo run build",
     "build:functions": "turbo run build --filter='./functions/*'",
     "sam:build": "bun run build:functions && sam build",
-    "sam:local": "sam local start-api",
+    "sam:local": "sam local start-api --env-vars env.json",
     "sam:invoke": "sam local invoke",
     "clean": "turbo run clean && rimraf dist build .aws-sam .turbo"
   },

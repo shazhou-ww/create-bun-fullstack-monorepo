@@ -102,25 +102,35 @@ bun run create:app <app-name>
 
 ### 本地开发 Lambda 函数
 
-1. 构建所有函数（使用 esbuild 预构建）：
+1. 复制环境变量模板并配置：
+
+```bash
+cp env.json.example env.json
+# 编辑 env.json 填入你的环境变量
+```
+
+2. 构建所有函数（使用 esbuild 预构建）：
 
 ```bash
 bun run build:functions
 ```
 
-2. 使用 SAM CLI 本地启动 API：
+3. 使用 SAM CLI 本地启动 API：
 
 ```bash
 bun run sam:local
 ```
 
-3. 测试特定函数：
+> **注意**: `sam:local` 使用 `--env-vars env.json` 传递环境变量给 Lambda 容器。
+> 请确保 `env.json` 中配置了正确的函数名和环境变量。
+
+4. 测试特定函数：
 
 ```bash
 bun run sam:invoke <FunctionName>
 ```
 
-4. 或者直接用 bun 运行 TypeScript 进行开发：
+5. 或者直接用 bun 运行 TypeScript 进行开发：
 
 ```bash
 bun run functions/<function-name>/src/index.ts
@@ -165,6 +175,28 @@ bun run lint:md:fix
 
 ### 环境变量
 
+#### SAM 本地开发
+
+SAM CLI 不会自动读取 `.env` 文件。需要使用 `env.json` 配置环境变量：
+
+1. 复制模板：`cp env.json.example env.json`
+2. 编辑 `env.json` 填入环境变量：
+
+```json
+{
+  "Parameters": {
+    "NODE_ENV": "development"
+  },
+  "MyFunctionName": {
+    "API_KEY": "your-api-key-here"
+  }
+}
+```
+
+> **注意**: `env.json` 包含敏感信息，已被 `.gitignore` 忽略。
+
+#### 环境配置文件
+
 项目支持分级环境配置：
 
 - `.env` - 本地开发（不应提交）
@@ -172,7 +204,7 @@ bun run lint:md:fix
 - `.env.staging` - 预发布环境
 - `.env.prod` - 生产环境
 
-每个 Lambda 函数也可以有自己的 `.env` 文件。
+每个 Lambda 函数也可以有自己的 `.env` 文件（用于参考需要的变量）。
 
 ### TypeScript 配置
 
