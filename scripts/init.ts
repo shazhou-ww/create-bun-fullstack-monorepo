@@ -123,6 +123,34 @@ const skipDirs = [
 // Process current directory
 walkDir(process.cwd(), replacements, skipDirs);
 
+// Special handling for package.json: replace template package name with project name
+// This handles the case where package.json was published with actual package name
+// instead of placeholder (e.g., "bun-fullstack-monorepo" -> "my-project")
+try {
+  const pkgJsonPath = join(process.cwd(), 'package.json');
+  const pkgJsonContent = readFileSync(pkgJsonPath, 'utf8');
+  const pkgJson = JSON.parse(pkgJsonContent);
+  
+  // List of possible template package names that should be replaced
+  const templatePackageNames = [
+    'bun-fullstack-monorepo',
+    'create-bun-fullstack-monorepo',
+  ];
+  
+  // If package.json has the template package name, replace it with project name
+  if (pkgJson.name && templatePackageNames.includes(pkgJson.name)) {
+    const oldName = pkgJson.name;
+    pkgJson.name = projectNameKebab;
+    writeFileSync(pkgJsonPath, JSON.stringify(pkgJson, null, 2) + '\n', 'utf8');
+    console.log(`📝 Updated package.json name: ${oldName} -> ${projectNameKebab}`);
+  }
+} catch (err) {
+  // Ignore errors, package.json might not exist or be invalid
+  if (err instanceof Error) {
+    console.warn(`Warning: Could not update package.json name: ${err.message}`);
+  }
+}
+
 console.log('✅ Project initialized successfully!');
 console.log(`📦 Project name: ${projectNameKebab}`);
 console.log(`🏢 Organization: ${orgName}`);

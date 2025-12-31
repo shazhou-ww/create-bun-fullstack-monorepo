@@ -3,7 +3,7 @@
 {{PROJECT_DESCRIPTION}}
 
 > **这是一个 Bun Create 模板**  
-> 使用 `bun create your-username/bun-fullstack-monorepo my-project` 创建新项目
+> 使用 `bun create bun-fullstack-monorepo my-project` 或 `bun create your-username/bun-fullstack-monorepo my-project` 创建新项目
 
 ## 项目结构
 
@@ -34,6 +34,16 @@
 
 ### 使用 Bun Create 创建新项目
 
+**从 npm 使用（推荐）：**
+
+```bash
+bun create bun-fullstack-monorepo my-project
+cd my-project
+bun install
+```
+
+**从 GitHub 使用：**
+
 ```bash
 bun create your-username/bun-fullstack-monorepo my-project
 cd my-project
@@ -41,7 +51,10 @@ bun run init  # 如果 bun create 没有自动运行 init
 bun install
 ```
 
-**注意**: 创建项目后，`init.ts` 脚本会自动运行（或手动运行 `bun run init`），将模板占位符替换为实际项目名称。
+**注意**: 
+- 从 npm 使用时，`init.ts` 脚本会在安装后自动运行（通过 `bun-create.postinstall`）
+- 从 GitHub 使用时，可能需要手动运行 `bun run init`
+- `init.ts` 脚本会将所有模板占位符替换为实际项目名称
 
 ### 前置要求
 

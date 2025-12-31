@@ -1,8 +1,49 @@
 {
   "name": "{{PROJECT_NAME}}",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "{{PROJECT_DESCRIPTION}}",
-  "private": true,
+  "type": "module",
+  "files": [
+    "templates/**/*",
+    "scripts/**/*",
+    "*.json",
+    "*.md",
+    "*.yaml",
+    "*.toml",
+    "*.config.*",
+    "!node_modules",
+    "!.git",
+    "!.turbo",
+    "!.aws-sam",
+    "!dist",
+    "!build",
+    "!coverage",
+    "!functions",
+    "!packages",
+    "!apps"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/bun-fullstack-monorepo.git"
+  },
+  "keywords": [
+    "bun",
+    "template",
+    "monorepo",
+    "fullstack",
+    "typescript",
+    "aws-lambda",
+    "react",
+    "vite",
+    "turborepo",
+    "sam"
+  ],
+  "license": "MIT",
+  "author": "Your Name",
+  "homepage": "https://github.com/your-username/bun-fullstack-monorepo#readme",
+  "bun-create": {
+    "postinstall": "bun run init"
+  },
   "workspaces": [
     "functions/*",
     "packages/*",
@@ -14,6 +55,7 @@
   },
   "scripts": {
     "init": "bun scripts/init.ts",
+    "prepublishOnly": "node scripts/prepublish.js",
     "create:function": "bun scripts/create.ts function",
     "create:package": "bun scripts/create.ts package",
     "create:app": "bun scripts/create.ts app",
