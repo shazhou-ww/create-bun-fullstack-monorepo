@@ -1,5 +1,5 @@
 {
-  "name": "{{PROJECT_NAME}}",
+  "name": "bun-fullstack-monorepo",
   "version": "0.1.0",
   "description": "{{PROJECT_DESCRIPTION}}",
   "type": "module",
