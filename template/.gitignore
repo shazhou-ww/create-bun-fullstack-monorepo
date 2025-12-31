@@ -1,5 +1,8 @@
 # Dependencies
 node_modules/
+.pnp
+.pnp.js
+.pnpm-store/
 .bun/
 bun.lockb
 
@@ -7,6 +10,7 @@ bun.lockb
 dist/
 build/
 *.tsbuildinfo
+.aws-sam/
 
 # Environment variables
 .env
@@ -14,8 +18,7 @@ build/
 .env.*.local
 
 # IDE
-.vscode/*
-!.vscode/settings.json
+.vscode/
 .idea/
 *.swp
 *.swo
@@ -31,6 +34,7 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
 
 # Testing
 coverage/
@@ -39,20 +43,14 @@ coverage/
 # TypeScript
 *.tsbuildinfo
 
+# SAM
+.aws-sam/
+# samconfig.toml - 已移除，应该提交到版本控制（只包含配置结构，不含敏感信息）
+
 # Temporary files
 *.tmp
 .cache/
 
-# Template directory (this is the source for bun create)
-# We keep it in git, but ignore any generated/test files
-template/node_modules/
-template/.bun/
-template/bun.lockb
-template/dist/
-template/build/
-template/.aws-sam/
-template/.turbo/
-template/coverage/
-template/functions/
-template/packages/
-template/apps/
+# Turborepo
+.turbo/
+
