@@ -15,7 +15,21 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Get target directory from command line arguments
-const targetDir = process.argv[2] || process.cwd();
+// bun create passes arguments after flags, so we need to find the first non-flag argument
+// or use the last argument as target directory
+const args = process.argv.slice(2);
+// Filter out flags (starting with --) and find the target directory
+// Usually the target directory is the last argument
+let targetDir = args[args.length - 1];
+// If the last argument is a flag, try to find a non-flag argument
+if (!targetDir || targetDir.startsWith('--')) {
+  const nonFlagArgs = args.filter(arg => !arg.startsWith('--'));
+  targetDir = nonFlagArgs[nonFlagArgs.length - 1] || process.cwd();
+}
+// If still no valid target, use current directory
+if (!targetDir || targetDir.startsWith('--')) {
+  targetDir = process.cwd();
+}
 const templateDir = join(__dirname, 'template');
 
 // Get project name from target directory
