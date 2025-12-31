@@ -1,5 +1,5 @@
 {
-  "name": "bun-fullstack-monorepo",
+  "name": "create-bun-fullstack-monorepo",
   "version": "0.1.0",
   "description": "A fullstack monorepo template with Bun, TypeScript, AWS Lambda, and React",
   "type": "module",
