@@ -15,21 +15,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Get target directory from command line arguments
-// bun create passes arguments after flags, so we need to find the first non-flag argument
-// or use the last argument as target directory
-const args = process.argv.slice(2);
-// Filter out flags (starting with --) and find the target directory
-// Usually the target directory is the last argument
-let targetDir = args[args.length - 1];
-// If the last argument is a flag, try to find a non-flag argument
-if (!targetDir || targetDir.startsWith('--')) {
-  const nonFlagArgs = args.filter(arg => !arg.startsWith('--'));
-  targetDir = nonFlagArgs[nonFlagArgs.length - 1] || process.cwd();
-}
-// If still no valid target, use current directory
-if (!targetDir || targetDir.startsWith('--')) {
-  targetDir = process.cwd();
-}
+const targetDir = process.argv[2] || process.cwd();
 const templateDir = join(__dirname, 'template');
 
 // Get project name from target directory
@@ -181,12 +167,29 @@ async function main() {
 
     // Copy template directory to target
     console.log(`📦 Creating project: ${projectNameKebab}...`);
+    console.log(`📂 Template directory: ${templateDir}`);
+    
+    // Check if template directory exists
+    try {
+      const templateStat = await stat(templateDir);
+      if (!templateStat.isDirectory()) {
+        throw new Error('Template path is not a directory');
+      }
+      const templateFiles = await readdir(templateDir);
+      console.log(`📄 Template files: ${templateFiles.join(', ')}`);
+    } catch (err) {
+      console.error(`❌ Template directory not found: ${templateDir}`);
+      console.error(`   Current __dirname: ${__dirname}`);
+      process.exit(1);
+    }
+    
     await cp(templateDir, targetDir, {
       recursive: true,
       filter: (src) => {
-        // Filter out node_modules and other unnecessary files
+        // Filter out node_modules and .git directory (but not .gitignore, .editorconfig, etc.)
+        const basename = src.split(/[/\\]/).pop() || '';
         return !src.includes('node_modules') && 
-               !src.includes('.git') &&
+               basename !== '.git' &&
                !src.includes('bun.lockb');
       },
     });
