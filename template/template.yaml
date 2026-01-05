@@ -23,6 +23,11 @@ Parameters:
 Resources:
   # Function resources will be merged from functions/*/template.yaml
   # Run 'bun run sam:merge' to generate the merged template
+  
+  # Placeholder resource to prevent empty Resources section error
+  # This will be overwritten when merging templates
+  Placeholder:
+    Type: AWS::CloudFormation::WaitConditionHandle
 
 # Outputs:
 #   ApiGatewayApi:

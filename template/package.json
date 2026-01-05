@@ -27,10 +27,14 @@
     "build": "turbo run build",
     "build:functions": "turbo run build --filter='./functions/*'",
     "sam:merge": "bun scripts/merge-templates.ts",
-    "sam:build": "bun run build:functions && bun run sam:merge",
+    "sam:build": "bun run build:functions && bun run sam:merge && sam build --template-file merged-template.yaml",
+    "sam:validate": "bun run sam:merge && sam validate --template-file merged-template.yaml",
     "sam:local": "bun run sam:build && sam local start-api --template-file merged-template.yaml --env-vars env.json --skip-pull-image",
     "sam:invoke": "bun run sam:build && sam local invoke --template-file merged-template.yaml --skip-pull-image",
-    "clean": "turbo run clean && rimraf dist build .aws-sam .turbo"
+    "sam:package": "bun run sam:build && sam package --template-file merged-template.yaml --output-template-file packaged.yaml",
+    "sam:deploy": "bun run sam:build && sam deploy --template-file merged-template.yaml",
+    "sam:deploy:guided": "bun run sam:build && sam deploy --template-file merged-template.yaml --guided",
+    "clean": "turbo run clean && rimraf dist build .aws-sam .turbo merged-template.yaml packaged.yaml"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.10",
