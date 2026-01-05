@@ -129,95 +129,10 @@ walkDir(targetDir);
 
 // Type-specific post-processing
 if (type === 'function') {
-  // Update SAM template
-  const samTemplatePath = join(rootDir, 'template.yaml');
-  try {
-    if (existsSync(samTemplatePath)) {
-      let templateContent = readFileSync(samTemplatePath, 'utf8');
-
-      const functionResourceName = `${pascalCase(name)}Function`;
-      if (templateContent.includes(`${functionResourceName}:`)) {
-        console.warn(`Warning: Function ${functionResourceName} already exists in template.yaml`);
-      } else {
-        const functionYaml = `  ${functionResourceName}:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: functions/${name}/dist
-      Handler: index.handler
-      Runtime: nodejs24.x
-      Environment:
-        Variables:
-          NODE_ENV: \${Env:NODE_ENV,prod}
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /${name}
-            Method: GET
-`;
-
-        const placeholderPattern =
-          /\s*# Placeholder resource \(remove after adding first function\)\s*\n\s*Placeholder:\s*\n\s*Type: AWS::CloudFormation::WaitConditionHandle\s*\n?/;
-        templateContent = templateContent.replace(placeholderPattern, '\n');
-
-        const commentedOutputsPattern =
-          /# Outputs:\s*\n#\s+ApiGatewayApi:\s*\n#\s+Description: API Gateway endpoint URL\s*\n#\s+Value: !Sub https:\/\/\$\{ServerlessRestApi\}\.execute-api\.\$\{AWS::Region\}\.amazonaws\.com\/Prod\//;
-        if (commentedOutputsPattern.test(templateContent)) {
-          templateContent = templateContent.replace(
-            commentedOutputsPattern,
-            `Outputs:
-  ApiGatewayApi:
-    Description: API Gateway endpoint URL
-    Value: !Sub https://\${ServerlessRestApi}.execute-api.\${AWS::Region}.amazonaws.com/Prod/`
-          );
-        }
-
-        const resourcesCommentPattern =
-          /(Resources:\s*\n\s*# Functions will be added here by create-function script\s*\n)/;
-        if (resourcesCommentPattern.test(templateContent)) {
-          templateContent = templateContent.replace(
-            resourcesCommentPattern,
-            `Resources:\n${functionYaml}`
-          );
-        } else if (templateContent.includes('Resources:')) {
-          if (templateContent.includes('\nOutputs:')) {
-            templateContent = templateContent.replace(/(\nOutputs:)/, `\n${functionYaml}$1`);
-          } else {
-            const resourcesMatch = templateContent.match(/(Resources:\s*\n)/);
-            if (resourcesMatch) {
-              templateContent = templateContent.replace(
-                resourcesMatch[1],
-                resourcesMatch[1] + functionYaml
-              );
-            }
-          }
-        } else {
-          if (templateContent.includes('\nOutputs:')) {
-            templateContent = templateContent.replace(
-              /(\nOutputs:)/,
-              `\nResources:\n${functionYaml}$1`
-            );
-          } else {
-            templateContent += `\nResources:\n${functionYaml}`;
-          }
-        }
-
-        writeFileSync(samTemplatePath, templateContent, 'utf8');
-        console.log('Updated template.yaml');
-      }
-    } else {
-      console.log(
-        'template.yaml not found. Please create it manually or run this script again after creating it.'
-      );
-    }
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.warn(`Warning: Could not update template.yaml: ${err.message}`);
-    }
-  }
-
   console.log(`Function ${name} created successfully!`);
-  console.log(`Next steps:`);
+  console.log(`\nEach function has its own template.yaml that defines its SAM configuration.`);
+  console.log(`The templates are merged automatically during 'bun run sam:build'.`);
+  console.log(`\nNext steps:`);
   console.log(`  cd functions/${name}`);
   console.log(`  bun install`);
   console.log(`  bun run build  # Build the function before deploying`);

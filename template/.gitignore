@@ -44,9 +44,9 @@ coverage/
 # TypeScript
 *.tsbuildinfo
 
-# SAM
+# SAM generated files
+merged-template.yaml
 .aws-sam/
-# samconfig.toml - 已移除，应该提交到版本控制（只包含配置结构，不含敏感信息）
 
 # Temporary files
 *.tmp

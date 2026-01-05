@@ -1,0 +1,21 @@
+# SAM Template for {{name}} function
+# This file will be merged into the root template.yaml during local testing
+# Note: Run 'bun run build:functions' before 'bun run sam:local'
+
+{{NamePascal}}Function:
+  Type: AWS::Serverless::Function
+  Properties:
+    # Points directly to the pre-built dist directory (built by esbuild)
+    CodeUri: functions/{{name}}/dist
+    Handler: index.handler
+    Runtime: nodejs24.x
+    Environment:
+      Variables:
+        NODE_ENV: ${Env:NODE_ENV,prod}
+    Events:
+      Api:
+        Type: Api
+        Properties:
+          Path: /{{name}}
+          Method: GET
+

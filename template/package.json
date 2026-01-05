@@ -26,9 +26,10 @@
     "lint:fix": "bun run lint:ts:fix && bun run lint:md:fix",
     "build": "turbo run build",
     "build:functions": "turbo run build --filter='./functions/*'",
-    "sam:build": "bun run build:functions && sam build",
-    "sam:local": "sam local start-api --env-vars env.json",
-    "sam:invoke": "sam local invoke",
+    "sam:merge": "bun scripts/merge-templates.ts",
+    "sam:build": "bun run build:functions && bun run sam:merge",
+    "sam:local": "bun run sam:build && sam local start-api --template-file merged-template.yaml --env-vars env.json --skip-pull-image",
+    "sam:invoke": "bun run sam:build && sam local invoke --template-file merged-template.yaml --skip-pull-image",
     "clean": "turbo run clean && rimraf dist build .aws-sam .turbo"
   },
   "devDependencies": {

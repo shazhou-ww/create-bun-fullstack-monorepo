@@ -21,13 +21,10 @@ Parameters:
       - prod
 
 Resources:
-  # Functions will be added here by create-function script
-  # Placeholder resource (remove after adding first function)
-  Placeholder:
-    Type: AWS::CloudFormation::WaitConditionHandle
+  # Function resources will be merged from functions/*/template.yaml
+  # Run 'bun run sam:merge' to generate the merged template
 
 # Outputs:
 #   ApiGatewayApi:
 #     Description: API Gateway endpoint URL
 #     Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
-
