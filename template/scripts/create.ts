@@ -17,13 +17,16 @@ import { fileURLToPath } from 'node:url';
 const __dirname = (import.meta as { dir?: string }).dir || dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, '..');
 
-type CreateType = 'function' | 'package' | 'app';
+type CreateType = 'function' | 'package' | 'app:react' | 'app:elysia';
+type TargetType = 'function' | 'package' | 'app';
+
+const validTypes = ['function', 'package', 'app:react', 'app:elysia'];
 
 const type = process.argv[2] as CreateType;
 const name = process.argv[3];
 
-if (!type || !['function', 'package', 'app'].includes(type)) {
-  console.error('Usage: bun scripts/create.ts <function|package|app> <name>');
+if (!type || !validTypes.includes(type)) {
+  console.error('Usage: bun scripts/create.ts <function|package|app:react|app:elysia> <name>');
   process.exit(1);
 }
 
@@ -32,17 +35,22 @@ if (!name) {
   process.exit(1);
 }
 
-const targetDir = join(rootDir, `${type}s`, name);
-const templateDir = join(rootDir, 'templates', type);
+// Determine target directory and template directory
+const isAppType = type.startsWith('app:');
+const targetType: TargetType = isAppType ? 'app' : (type as TargetType);
+const templateName = isAppType ? type.replace(':', '-') : type; // app:react -> app-react
+
+const targetDir = join(rootDir, `${targetType}s`, name);
+const templateDir = join(rootDir, 'templates', templateName);
 
 if (existsSync(targetDir)) {
-  console.error(
-    `${type === 'function' ? 'Function' : type === 'package' ? 'Package' : 'App'} ${name} already exists!`
-  );
+  const typeLabel = targetType === 'function' ? 'Function' : targetType === 'package' ? 'Package' : 'App';
+  console.error(`${typeLabel} ${name} already exists!`);
   process.exit(1);
 }
 
-console.log(`Creating ${type}: ${name}...`);
+const appTypeLabel = type === 'app:react' ? 'React' : type === 'app:elysia' ? 'Elysia' : '';
+console.log(`Creating ${targetType}${appTypeLabel ? ` (${appTypeLabel})` : ''}: ${name}...`);
 
 // Copy directory recursively (cross-platform)
 function copyDir(src: string, dest: string): void {
@@ -141,11 +149,16 @@ if (type === 'function') {
   console.log(`Next steps:`);
   console.log(`  cd packages/${name}`);
   console.log(`  bun install`);
-} else if (type === 'app') {
-  console.log(`App ${name} created successfully!`);
+} else if (type === 'app:react') {
+  console.log(`React app ${name} created successfully!`);
+  console.log(`Next steps:`);
+  console.log(`  cd apps/${name}`);
+  console.log(`  bun install`);
+  console.log(`  bun run dev`);
+} else if (type === 'app:elysia') {
+  console.log(`Elysia app ${name} created successfully!`);
   console.log(`Next steps:`);
   console.log(`  cd apps/${name}`);
   console.log(`  bun install`);
   console.log(`  bun run dev`);
 }
-

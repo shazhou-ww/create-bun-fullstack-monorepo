@@ -11,7 +11,7 @@
 {{PROJECT_NAME}}/
 ├── functions/          # Lambda 函数包（使用 esbuild 预构建）
 ├── packages/           # 共享包（直接使用 TypeScript 源码，不做构建）
-├── apps/              # 前端应用（使用 Vite 构建）
+├── apps/              # 应用（前端 React/Vite 或后端 Elysia）
 ├── templates/         # 模板包（用于创建新的 functions/packages/apps）
 ├── scripts/           # 创建和工具脚本
 └── template.yaml      # SAM CLI 模板
@@ -87,16 +87,27 @@ bun run create:package <package-name>
 1. 从 `templates/package` 克隆模板
 2. 替换模板中的占位符
 
-### 创建新的前端应用
+### 创建新的前端应用（React）
 
 ```bash
-bun run create:app <app-name>
+bun run create:app:react <app-name>
 ```
 
 这会：
 
-1. 从 `templates/app` 克隆模板
+1. 从 `templates/app-react` 克隆模板
 2. 设置 Vite + React 项目
+
+### 创建新的后端应用（Elysia）
+
+```bash
+bun run create:app:elysia <app-name>
+```
+
+这会：
+
+1. 从 `templates/app-elysia` 克隆模板
+2. 设置 Elysia 后端服务
 
 ## 开发
 
@@ -255,11 +266,10 @@ sam deploy --guided
 
 ### apps/
 
-前端应用：
+应用（前端或后端）：
 
-- 使用 Vite 构建
-- 独立的开发和构建流程
-- 可以部署到任何静态托管服务
+- **React 前端应用**: 使用 Vite 构建，可以部署到任何静态托管服务
+- **Elysia 后端应用**: 使用 Bun 运行，可以部署到支持 Bun 的平台（如 Railway、Fly.io）
 
 ### templates/
 
@@ -267,7 +277,8 @@ sam deploy --guided
 
 - `function/` - Lambda 函数模板
 - `package/` - 共享包模板
-- `app/` - 前端应用模板
+- `app-react/` - React 前端应用模板
+- `app-elysia/` - Elysia 后端应用模板
 
 ## 最佳实践
 

@@ -8,6 +8,9 @@
  * 2. Replace placeholders in template files
  */
 
+// Bun's global prompt function
+declare function prompt(message?: string): string | null;
+
 import { cp, mkdir, readdir, readFile, writeFile, stat } from 'node:fs/promises';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -21,9 +24,6 @@ const templateDir = join(__dirname, 'template');
 // Get project name from target directory
 const projectName = targetDir.split(/[/\\]/).pop() || 'my-project';
 
-// Get org name from environment variable or use default
-const orgName = process.env.ORG_NAME || '@myorg';
-
 // Convert project name to different formats
 const projectNameKebab = projectName.toLowerCase().replace(/\s+/g, '-');
 const projectNamePascal = projectNameKebab
@@ -31,13 +31,30 @@ const projectNamePascal = projectNameKebab
   .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
   .join('');
 
-// Replacement mappings
-const replacements: Record<string, string> = {
-  '{{PROJECT_NAME}}': projectNameKebab,
-  '{{PROJECT_NAME_PASCAL}}': projectNamePascal,
-  '{{ORG_NAME}}': orgName,
-  '{{PROJECT_DESCRIPTION}}': `${projectNamePascal} - Fullstack Monorepo with Bun`,
-};
+// Prompt for organization name
+async function promptOrgName(): Promise<string> {
+  // Check if ORG_NAME is set via environment variable
+  if (process.env.ORG_NAME) {
+    return process.env.ORG_NAME;
+  }
+
+  // Interactive prompt
+  console.log('');
+  console.log('🏢 Organization name is used for package naming (e.g., @myorg/package-name)');
+  
+  const input = prompt('   Enter organization name (without @, default: myorg): ');
+  
+  if (!input || input.trim() === '') {
+    return '@myorg';
+  }
+
+  const orgName = input.trim();
+  // Ensure org name starts with @
+  return orgName.startsWith('@') ? orgName : `@${orgName}`;
+}
+
+// Placeholder for replacements (will be populated after prompt)
+let replacements: Record<string, string> = {};
 
 // Directories to skip during replacement
 const skipDirs = [
@@ -162,11 +179,23 @@ async function updatePackageJson(pkgJsonPath: string): Promise<void> {
 // Main function
 async function main() {
   try {
+    console.log(`📦 Creating project: ${projectNameKebab}...`);
+
+    // Prompt for organization name
+    const orgName = await promptOrgName();
+    
+    // Initialize replacements with all values
+    replacements = {
+      '{{PROJECT_NAME}}': projectNameKebab,
+      '{{PROJECT_NAME_PASCAL}}': projectNamePascal,
+      '{{ORG_NAME}}': orgName,
+      '{{PROJECT_DESCRIPTION}}': `${projectNamePascal} - Fullstack Monorepo with Bun`,
+    };
+
+    console.log('');
+
     // Create target directory
     await mkdir(targetDir, { recursive: true });
-
-    // Copy template directory to target
-    console.log(`📦 Creating project: ${projectNameKebab}...`);
     console.log(`📂 Template directory: ${templateDir}`);
     
     // Check if template directory exists
@@ -213,9 +242,10 @@ async function main() {
     console.log('Next steps:');
     console.log('  1. cd ' + targetDir);
     console.log('  2. bun install');
-    console.log('  3. bun run create:function <name>  # Create a Lambda function');
-    console.log('  4. bun run create:package <name>   # Create a shared package');
-    console.log('  5. bun run create:app <name>       # Create a frontend app');
+    console.log('  3. bun run create:function <name>     # Create a Lambda function');
+    console.log('  4. bun run create:package <name>      # Create a shared package');
+    console.log('  5. bun run create:app:react <name>    # Create a React frontend app');
+    console.log('  6. bun run create:app:elysia <name>   # Create an Elysia backend app');
   } catch (error) {
     console.error('❌ Error creating project:', error instanceof Error ? error.message : String(error));
     process.exit(1);
