@@ -90,22 +90,8 @@ function pascalCase(str: string): string {
     .join('');
 }
 
-// Read org name from package.json (should be set by init.ts)
-let orgName = '@myorg';
-try {
-  const pkgJson = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf8'));
-  // Try to extract org name from any existing package name
-  // This is a fallback, ideally init.ts should set it
-  if (pkgJson.name && pkgJson.name.startsWith('@')) {
-    orgName = pkgJson.name.split('/')[0];
-  }
-} catch {
-  // Use default
-}
-
 const replacements: Record<string, string> = {
   '{{name}}': name,
-  '{{ORG_NAME}}': orgName,
 };
 
 if (type === 'function') {
